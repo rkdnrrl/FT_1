@@ -19,19 +19,17 @@
 
   #unity-container {
     position: absolute;
-    left: 50%;
-    top: 50%;
     width: 1280px;
     height: 720px;
-    margin-left: -640px; /* 1280 / 2 */
-    margin-top: -360px;  /* 720 / 2 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   canvas {
     width: 100% !important;
     height: 100% !important;
   }
-</style>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
@@ -107,7 +105,7 @@
 
         var meta = document.createElement('meta');
         meta.name = 'viewport';
-        meta.content = 'width=1280, height=720, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
         document.getElementsByTagName('head')[0].appendChild(meta);
         container.className = "unity-mobile";
         canvas.className = "unity-mobile";
