@@ -8,48 +8,36 @@
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
+<!-- 세로 경고 메시지 -->
+<div id="rotate-warning" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(255,255,255,0.95);
+    z-index: 9999;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    padding-top: 40vh;
+">
+    가로 화면으로 전환해 주세요
+</div>
+
 <script>
 function enforceLandscape() {
     const isLandscape = screen.orientation && screen.orientation.type.startsWith("landscape");
     const isWide = window.innerWidth > window.innerHeight;
 
-    const container = document.getElementById('unity-container');
-    const warningId = 'rotate-warning';
+    const warning = document.getElementById('rotate-warning');
 
     if (isLandscape || isWide) {
-        // 가로일 때: 게임 화면 보이고, 경고 숨김
-        if (container) container.style.display = 'block';
-        const warning = document.getElementById(warningId);
-        if (warning) warning.style.display = 'none';
+        warning.style.display = 'none'; // 경고 숨김
     } else {
-        // 세로일 때: 게임 화면 숨기고, 경고 표시
-        if (container) container.style.display = 'none';
-
-        if (!document.getElementById(warningId)) {
-            const warning = document.createElement('div');
-            warning.id = warningId;
-            warning.innerText = '가로 화면으로 전환해 주세요';
-            warning.style = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 24px;
-                text-align: center;
-                color: #333;
-                background: white;
-                padding: 20px;
-                border-radius: 12px;
-                z-index: 9999;
-            `;
-            document.body.appendChild(warning);
-        } else {
-            document.getElementById(warningId).style.display = 'block';
-        }
+        warning.style.display = 'block'; // 경고 표시
     }
 }
 
-// 방향 변경 시 이벤트
 window.addEventListener('orientationchange', enforceLandscape);
 window.addEventListener('resize', enforceLandscape);
 window.addEventListener('load', enforceLandscape);
