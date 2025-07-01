@@ -49,25 +49,23 @@ window.addEventListener('load', enforceLandscape);
 </script>
 
 <script>
-function requestFullscreenOnTouch() {
+window.addEventListener("load", () => {
     const canvas = document.querySelector("canvas");
+
     if (!canvas) return;
 
-    function goFullscreen() {
+    canvas.addEventListener("touchstart", function goFullscreen() {
+        // 전체화면 요청
         if (canvas.requestFullscreen) {
             canvas.requestFullscreen();
         } else if (canvas.webkitRequestFullscreen) {
-            canvas.webkitRequestFullscreen();
+            canvas.webkitRequestFullscreen(); // Safari
         }
-        // 이벤트 제거 (한 번만 실행)
-        document.removeEventListener('touchstart', goFullscreen);
-    }
 
-    document.addEventListener('touchstart', goFullscreen);
-}
-
-// Unity 로딩 후에 실행
-window.addEventListener("load", requestFullscreenOnTouch);
+        // 한번만 실행되도록 이벤트 제거
+        canvas.removeEventListener("touchstart", goFullscreen);
+    });
+});
 </script>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=1280 height=720 tabindex="-1"></canvas>
