@@ -47,26 +47,6 @@ window.addEventListener('orientationchange', enforceLandscape);
 window.addEventListener('resize', enforceLandscape);
 window.addEventListener('load', enforceLandscape);
 </script>
-
-<script>
-window.addEventListener("load", () => {
-    const canvas = document.querySelector("canvas");
-
-    if (!canvas) return;
-
-    canvas.addEventListener("touchstart", function goFullscreen() {
-        // 전체화면 요청
-        if (canvas.requestFullscreen) {
-            canvas.requestFullscreen();
-        } else if (canvas.webkitRequestFullscreen) {
-            canvas.webkitRequestFullscreen(); // Safari
-        }
-
-        // 한번만 실행되도록 이벤트 제거
-        canvas.removeEventListener("touchstart", goFullscreen);
-    });
-});
-</script>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=1280 height=720 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
