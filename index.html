@@ -19,6 +19,27 @@
       </div>
       <div id="unity-warning"> </div>
     </div>
+<script>
+function requestFullscreenOnTouch() {
+    const canvas = document.querySelector("canvas");
+    if (!canvas) return;
+
+    function goFullscreen() {
+        if (canvas.requestFullscreen) {
+            canvas.requestFullscreen();
+        } else if (canvas.webkitRequestFullscreen) {
+            canvas.webkitRequestFullscreen();
+        }
+        // 이벤트 제거 (한 번만 실행)
+        document.removeEventListener('touchstart', goFullscreen);
+    }
+
+    document.addEventListener('touchstart', goFullscreen);
+}
+
+// Unity 로딩 후에 실행
+window.addEventListener("load", requestFullscreenOnTouch);
+</script>
     <script>
       window.addEventListener("load", function () {
         if ("serviceWorker" in navigator) {
