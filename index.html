@@ -159,29 +159,36 @@ window.addEventListener('load', enforceLandscape);
     </script>
 <canvas id="unity-canvas"></canvas>
 
-  <script>
-    // 전체화면 진입 함수
-    function goFullscreen() {
-      const canvas = document.getElementById('unity-canvas');
-      if (canvas.requestFullscreen) {
-        canvas.requestFullscreen();
-      } else if (canvas.webkitRequestFullscreen) {
-        canvas.webkitRequestFullscreen(); // Safari (iOS는 작동안함)
-      }
+<script>
+  // iOS 여부 확인 함수
+  function isIOS() {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  // 전체화면 진입 함수 (iOS에서는 호출 안 함)
+  function goFullscreen() {
+    const canvas = document.getElementById('unity-canvas');
+
+    if (isIOS()) {
+      // iOS는 전체화면 API 자체가 없으므로 아무것도 하지 않음
+      console.log("iOS에서는 전체화면을 지원하지 않습니다.");
+      return;
     }
 
-    // 유저 터치 시 전체화면 요청
-    window.addEventListener('load', () => {
-      const canvas = document.getElementById('unity-canvas');
-      canvas.addEventListener('touchend', () => {
-        goFullscreen();
-      }, { once: false });
-    });
-  </script>
+    if (canvas.requestFullscreen) {
+      canvas.requestFullscreen();
+    } else if (canvas.webkitRequestFullscreen) {
+      canvas.webkitRequestFullscreen(); // old Safari (desktop)
+    }
+  }
 
-  <script src="Build/UnityLoader.js"></script>
-  <script>
-    UnityLoader.instantiate("unity-canvas", "Build/yourBuild.json");
-  </script>
+  // 유저 터치 시 전체화면 요청
+  window.addEventListener('load', () => {
+    const canvas = document.getElementById('unity-canvas');
+    canvas.addEventListener('touchend', () => {
+      goFullscreen();
+    }, { once: false });
+  });
+</script>
   </body>
 </html>
