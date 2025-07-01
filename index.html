@@ -8,6 +8,20 @@
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
+<script>
+function enforceLandscape() {
+    if (window.innerHeight > window.innerWidth) {
+        // 세로일 경우 경고 표시
+        document.getElementById('unity-container').style.display = 'none';
+        document.body.innerHTML += '<div style="text-align:center;padding-top:50px;">가로 화면으로 전환해 주세요</div>';
+    } else {
+        document.getElementById('unity-container').style.display = 'block';
+    }
+}
+
+window.addEventListener('resize', enforceLandscape);
+window.addEventListener('load', enforceLandscape);
+</script>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=1280 height=720 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
@@ -81,7 +95,7 @@
 
         var meta = document.createElement('meta');
         meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">';
         document.getElementsByTagName('head')[0].appendChild(meta);
         container.className = "unity-mobile";
         canvas.className = "unity-mobile";
