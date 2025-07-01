@@ -6,19 +6,48 @@
     <title>Unity WebGL Player | FriendsPang</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <link rel="manifest" href="manifest.webmanifest">
   </head>
   <body>
-    <div id="unity-container">
-      <canvas id="unity-canvas" width=1280 height=720 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning"> </div>
-    </div>
+<div id="rotate-warning" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(255,255,255,1);
+    z-index: 9999;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    padding-top: 40vh;
+">
+    画面を水平にしてください
+</div>
+
+<script>
+function enforceLandscape() {
+    const isLandscape = screen.orientation && screen.orientation.type.startsWith("landscape");
+    const isWide = window.innerWidth > window.innerHeight;
+
+    const warning = document.getElementById('rotate-warning');
+
+    if (isLandscape || isWide) {
+        warning.style.display = 'none';
+        if (typeof SendMessage === 'function') {
+            SendMessage("GamePauseManager", "ResumeGame");
+        }
+    } else {
+        warning.style.display = 'block';
+        if (typeof SendMessage === 'function') {
+            SendMessage("GamePauseManager", "PauseGame");
+        }
+    }
+}
+
+window.addEventListener('orientationchange', enforceLandscape);
+window.addEventListener('resize', enforceLandscape);
+window.addEventListener('load', enforceLandscape);
+</script>
+
 <script>
 function requestFullscreenOnTouch() {
     const canvas = document.querySelector("canvas");
@@ -40,17 +69,28 @@ function requestFullscreenOnTouch() {
 // Unity 로딩 후에 실행
 window.addEventListener("load", requestFullscreenOnTouch);
 </script>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width=1280 height=720 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+        <div id="unity-webgl-logo"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">FriendsPang</div>
+      </div>
+    </div>
     <script>
-      window.addEventListener("load", function () {
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.register("ServiceWorker.js");
-        }
-      });
 
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
       var warningBanner = document.querySelector("#unity-warning");
 
       // Shows a temporary message banner/ribbon for a few seconds, or
@@ -90,7 +130,7 @@ window.addEventListener("load", requestFullscreenOnTouch);
         showBanner: unityShowBanner,
       };
 
-      // By default Unity keeps WebGL canvas render target size matched with
+      // By default, Unity keeps WebGL canvas render target size matched with
       // the DOM size of the canvas element (scaled by window.devicePixelRatio)
       // Set this to false if you want to decouple this synchronization from
       // happening inside the engine, and you would instead like to size up
@@ -99,10 +139,24 @@ window.addEventListener("load", requestFullscreenOnTouch);
 
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
+
         var meta = document.createElement('meta');
         meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">';
         document.getElementsByTagName('head')[0].appendChild(meta);
+        container.className = "unity-mobile";
+        canvas.className = "unity-mobile";
+
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
+
+
+      } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+
+        canvas.style.width = "1280px";
+        canvas.style.height = "720px";
       }
 
       loadingBar.style.display = "block";
@@ -112,13 +166,18 @@ window.addEventListener("load", requestFullscreenOnTouch);
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
-        }).then((unityInstance) => {
-          loadingBar.style.display = "none";
-        }).catch((message) => {
-          alert(message);
-        });
-      };
+              }).then((unityInstance) => {
+                loadingBar.style.display = "none";
+                fullscreenButton.onclick = () => {
+                  unityInstance.SetFullscreen(1);
+                };
+              }).catch((message) => {
+                alert(message);
+              });
+            };
+
       document.body.appendChild(script);
+
     </script>
   </body>
 </html>
