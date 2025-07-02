@@ -3,12 +3,40 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | FriendsPang</title>
+    <title>Unity Web Player | FriendsPang</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="manifest" href="manifest.webmanifest">
   </head>
   <body>
+ <div id="rotate-warning" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:black; z-index:9999; justify-content:center; align-items:center;">
+    <img src="rotate.jpg" style="max-width:80%; max-height:80%;" alt="가로로 돌려주세요">
+  </div>
+
+  <canvas id="unity-canvas"></canvas>
+
+<script>
+function checkOrientation() {
+  const warning = document.getElementById('rotate-warning');
+  const canvas = document.getElementById('unity-canvas');
+  const isPortrait = window.innerHeight > window.innerWidth;
+
+  if (isPortrait) {
+    // 세로일 때: Unity 숨기고 이미지 표시
+    warning.style.display = 'flex';
+    canvas.style.display = 'none';
+  } else {
+    // 가로일 때: Unity 보이고 이미지 숨김
+    warning.style.display = 'none';
+    canvas.style.display = 'block';
+  }
+}
+
+// 최초 실행 + 화면 회전 시 실행
+window.addEventListener('load', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+</script>
     <div id="unity-container">
       <canvas id="unity-canvas" width=1280 height=720 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
@@ -59,6 +87,7 @@
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/Build.loader.js";
       var config = {
+        arguments: [],
         dataUrl: buildUrl + "/Build.data",
         frameworkUrl: buildUrl + "/Build.framework.js",
         codeUrl: buildUrl + "/Build.wasm",
@@ -99,5 +128,31 @@
       };
       document.body.appendChild(script);
     </script>
+<canvas id="unity-canvas"></canvas>
+
+  <script>
+    // 전체화면 진입 함수
+    function goFullscreen() {
+      const canvas = document.getElementById('unity-canvas');
+      if (canvas.requestFullscreen) {
+        canvas.requestFullscreen();
+      } else if (canvas.webkitRequestFullscreen) {
+        canvas.webkitRequestFullscreen(); // Safari (iOS는 작동안함)
+      }
+    }
+
+    // 유저 터치 시 전체화면 요청
+    window.addEventListener('load', () => {
+      const canvas = document.getElementById('unity-canvas');
+      canvas.addEventListener('touchend', () => {
+        goFullscreen();
+      }, { once: true });
+    });
+  </script>
+
+  <script src="Build/UnityLoader.js"></script>
+  <script>
+    UnityLoader.instantiate("unity-canvas", "Build/yourBuild.json");
+  </script>
   </body>
 </html>
